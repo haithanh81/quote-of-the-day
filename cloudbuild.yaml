@@ -37,6 +37,6 @@ steps:
     - '--region=asia-southeast1'
     # Cho phép truy cập không cần xác thực để bất kỳ ai cũng có thể gọi API công khai của chúng ta.
     - '--allow-unauthenticated'
-    # Thiết lập nền tảng là 'managed' (tùy chọn serverless).
+    # Thiết lập nền tảng là 'managed' (tùy chọn serverless).....
     - '--platform=managed'
     
