@@ -39,4 +39,3 @@ steps:
     - '--allow-unauthenticated'
     # Thiết lập nền tảng là 'managed' (tùy chọn serverless)..
     - '--platform=managed'
-    
