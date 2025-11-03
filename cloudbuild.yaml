@@ -1,0 +1,42 @@
+steps:
+# Bước 1: Xây dựng container image bằng builder Docker tiêu chuẩn.
+- name: 'gcr.io/cloud-builders/docker'
+  id: 'Build'
+  args:
+    - 'build'
+    # '-t' dùng để gắn thẻ (tag) cho image. Định dạng này rất quan trọng đối với Artifact Registry.
+    # asia-southeast1-docker.pkg.dev là endpoint của Artifact Registry trong khu vực.
+    # $PROJECT_ID là một biến thay thế được Cloud Build cung cấp tự động.
+    # 'quote-of-the-day' là tên kho chứa (repository) của chúng ta.
+    # 'api' là tên image của chúng ta.
+    # $COMMIT_SHA cũng là một biến thay thế, cung cấp một thẻ duy nhất cho mỗi lần build, tương ứng với mã hash của commit.
+    - '-t'
+    - 'asia-southeast1-docker.pkg.dev/$PROJECT_ID/quote-of-the-day/api:$COMMIT_SHA'
+    # '.' chỉ thị cho Docker sử dụng Dockerfile trong thư mục hiện tại.
+    - '.'
+
+# Bước 2: Đẩy container image lên Artifact Registry.
+- name: 'gcr.io/cloud-builders/docker'
+  id: 'Push'
+  args:
+    - 'push'
+    - 'asia-southeast1-docker.pkg.dev/$PROJECT_ID/quote-of-the-day/api:$COMMIT_SHA'
+
+# Bước 3: Triển khai image mới lên Cloud Run.
+- name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
+  id: 'Deploy'
+  entrypoint: 'gcloud'
+  args:
+    - 'run'
+    - 'deploy'
+    # Tên của dịch vụ Cloud Run của chúng ta.
+    - 'quote-of-the-day'
+    # Chỉ định image mà chúng ta vừa xây dựng và đẩy lên.
+    - '--image=asia-southeast1-docker.pkg.dev/$PROJECT_ID/quote-of-the-day/api:$COMMIT_SHA'
+    # Triển khai đến cùng khu vực để có độ trễ thấp giữa Artifact Registry và Cloud Run.
+    - '--region=asia-southeast1'
+    # Cho phép truy cập không cần xác thực để bất kỳ ai cũng có thể gọi API công khai của chúng ta.
+    - '--allow-unauthenticated'
+    # Thiết lập nền tảng là 'managed' (tùy chọn serverless).
+    - '--platform=managed'
+    
