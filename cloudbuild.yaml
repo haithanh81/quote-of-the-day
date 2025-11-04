@@ -44,3 +44,4 @@ steps:
 # Việc này là bắt buộc khi sử dụng tài khoản dịch vụ không phải mặc định.
 options:
   logging: CLOUD_LOGGING_ONLY
+  
