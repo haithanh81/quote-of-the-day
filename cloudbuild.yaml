@@ -39,3 +39,8 @@ steps:
     - '--allow-unauthenticated'
     # Thiết lập nền tảng là 'managed' (tùy chọn serverless)..
     - '--platform=managed'
+
+    # BỔ SUNG: Chỉ định tùy chọn lưu trữ nhật ký
+# Việc này là bắt buộc khi sử dụng tài khoản dịch vụ không phải mặc định.
+options:
+  logging: CLOUD_LOGGING_ONLY
